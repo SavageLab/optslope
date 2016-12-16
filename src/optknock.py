@@ -7,6 +7,7 @@ from cobra.core.Solution import Solution
 
 M = 1000
 
+
 class OptKnock(object):
 
     def __init__(self, model, verbose=False):
@@ -22,7 +23,7 @@ class OptKnock(object):
         
         self.has_flux_as_variables = False
     
-    def create_prob(self, sense=LpMaximize, use_glpk=False):
+    def create_prob(self, sense=LpMaximize, use_glpk=True):
         # create the LP
         self.prob = LpProblem('OptKnock', sense=sense)
         if use_glpk:

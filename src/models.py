@@ -3,8 +3,8 @@ from copy import deepcopy
 from cobra.io.sbml import create_cobra_model_from_sbml_file
 from cobra.core import Reaction, Metabolite, Formula
 
+
 def init_wt_model(model_name, carbon_sources, BM_lower_bound=0.1):
-    
     if model_name == 'ecoli_core':
         model = create_cobra_model_from_sbml_file('data/ecoli_core.xml', old_sbml=True)
 
@@ -39,20 +39,26 @@ def init_wt_model(model_name, carbon_sources, BM_lower_bound=0.1):
     
     return model
 
+
 def clone_model(model):
     return deepcopy(model)
+
 
 def add_metabolite(model, id, formula, name, compartment='C'):
     try:
         model.metabolites.index(id)
-    except AttributeError:
+    except Exception, e:
+        # CobraPy versions differ in what error they raise,
+        # hence catching base Exception.
         met = Metabolite(id=id, formula=Formula(formula),
                             name=name, compartment=compartment)
         model.add_metabolites([met])
 
+
 def knockout_reactions(model, ko_reactions):
     for r in ko_reactions.split(','):
         model.remove_reactions(r)
+
 
 def add_reaction(model, id, name, sparse,
                  lower_bound=0, upper_bound=1000):
@@ -73,7 +79,8 @@ def add_reaction(model, id, name, sparse,
     reaction.upper_bound = upper_bound
     model.add_reactions([reaction])
     return reaction
-        
+
+
 def knockin_reactions(model, ki_reactions, lower_bound=None, upper_bound=1000):
     for rid in ki_reactions.split(','):
         if rid.startswith('EX_'):
@@ -88,11 +95,13 @@ def knockin_reactions(model, ki_reactions, lower_bound=None, upper_bound=1000):
         
         if rid == 'PRK':
             add_metabolite(model, 'rubp_D_c', 'C5H12O11P2', 'D-ribulose 1,5-bisphosphate')
-            sprs = {'ru5p_D_c' : -1, 'atp_c' : -1, 'rubp_D_c' : 1, 'adp_c' : 1}
+            sprs = {'ru5p_D_c': -1, 'atp_c': -1,
+                    'rubp_D_c': 1, 'adp_c': 1}
             name = 'phosphoribulokinase'
         elif rid == 'RBC':
             add_metabolite(model, 'rubp_D_c', 'C5H12O11P2', 'D-ribulose 1,5-bisphosphate')
-            sprs = {'rubp_D_c' : -1, 'h2o_c' : -1, 'co2_c' : -1, '3pg_c' : 2, 'h_c' : 3}
+            sprs = {'rubp_D_c': -1, 'h2o_c': -1,
+                    'co2_c': -1, '3pg_c': 2, 'h_c' : 3}
             name = 'RuBisCO'
         elif rid == 'EDD':
             add_metabolite(model, '2ddg6p_c', 'C6H8O9P', '2-dehydro-3-deoxy-D-gluconate 6-phosphate')
