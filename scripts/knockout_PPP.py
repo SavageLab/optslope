@@ -2,11 +2,17 @@
 import logging
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
+from os import path
 from src import models
 from src import analysis_toolbox
 
+
 def main():
+    if not path.exists('res'):
+        os.makedirs('res')
+
     #draw_PPP('rubisco_single',
     #         target_reaction='RBC',
     #         knockins=['RBC,PRK'],
@@ -26,6 +32,7 @@ def main():
              knockouts=['G6PDH2r,PFK', 'G6PDH2r,PFK,TALA', 'G6PDH2r,TALA'],
              rbc_upper_bound=100)
     
+    """
     draw_PPP('rubisco_double',
              target_reaction='RBC',
              knockins=['RBC,PRK'],
@@ -46,7 +53,9 @@ def main():
              carbon_sources=['xu5p_D,ac', 'dhap,ac', 'ac'],
              knockouts=['ICL,MALS,PFK,G6PDH2r', 'ICL,MALS,RPI,G6PDH2r'],
              rbc_upper_bound=100)
-             
+    """
+
+
 def draw_PPP(title, target_reaction, knockins, carbon_sources, knockouts,
              rbc_upper_bound=100):
     for ki in knockins:
